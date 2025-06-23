@@ -4,6 +4,13 @@
 
 **Zero-Waste** is a smart, user-friendly web application that helps users find delicious recipes using the ingredients they already have at home - reducing food waste, encouraging creative cooking and making everyday ingredients feel special.
 
+## 🛠️ Technologies Used
+
+- **HTML** – Builds the structure of the webpage.
+- **Tailwind CSS** – Adds fast and clean styling using utility classes (no need to write custom CSS).
+- **JavaScript** – Makes the app work: handles ingredient input, fetches recipes, and updates the UI.
+
+
 ## 🔥 Features
 
 - Input ingredients (comma-separated) using a simple form  
