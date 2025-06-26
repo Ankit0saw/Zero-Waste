@@ -30,59 +30,71 @@ addBtn.addEventListener("click", () => {
 
 //to show the generated recipes
 document.getElementById("add-btn").addEventListener("click", async () => {
-    const ingredients = document.getElementById("ingredients").value;
-    if (!ingredients.trim()) return;
-
-    const res = await fetch("http://localhost:3000/get-recipes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ingredients }),
-    });
-
-    const data = await res.json();
+    const ingredients = document.getElementById("ingredients").value.trim();
     const container = document.getElementById("recipe-result");
-    container.innerHTML = "";
 
-    if (!data.success) {
-        container.innerHTML = `<p class="text-red-600">Error: ${data.error}</p>`;
+    if (!ingredients) {
+        container.innerHTML = `<p class="text-red-600">Please enter some ingredients.</p>`;
         return;
     }
 
-    // Parse Gemini's response to extract recipes
-    const recipes = data.data.split("\n\n").filter(Boolean);
+    container.innerHTML = `<p class="text-gray-600 p-2">Fetching recipes...</p>`;
 
-    recipes.forEach((recipeBlock) => {
-        const card = document.createElement("div");
-        card.className = "bg-green-50 border rounded-lg p-4 mb-4 shadow";
+    try {
+        const res = await fetch("http://localhost:3000/get-recipes", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ingredients }),
+        });
 
-        const lines = recipeBlock.split("\n");
-        const title = lines[0]?.replace(/^\d+\.\s*/, "") || "Recipe";
-        const shortDesc = lines.find(l => l.toLowerCase().includes("description")) || "";
-        const cookTime = lines.find(l => l.toLowerCase().includes("cooking time")) || "Time not available";
-        const vegStatus = lines.find(l => l.toLowerCase().includes("veg")) || "Veg/Non-Veg not clear";
+        const data = await res.json();
+        container.innerHTML = "";
 
-        const hiddenContent = document.createElement("div");
-        hiddenContent.className = "mt-2 hidden";
+        if (!data.success) {
+            container.innerHTML = `<p class="text-red-600">Error: ${data.error}</p>`;
+            return;
+        }
 
-        hiddenContent.innerText = lines.slice(4).join("\n");
+        // Split Gemini response into recipe blocks
+        const recipes = data.data.split(/\n\s*\n/).filter(Boolean);
 
-        const btn = document.createElement("button");
-        btn.className = "mt-2 px-4 py-1 bg-green-600 text-white rounded";
-        btn.textContent = "Read more";
-        btn.addEventListener("click", () => hiddenContent.classList.toggle("hidden"));
+        recipes.forEach((recipeBlock, i) => {
+            try {
+                const card = document.createElement("div");
+                card.className = "bg-green-100 border rounded-lg p-4 mb-4 shadow";
 
-        card.innerHTML = `
-            <h3 class="text-lg font-bold text-green-900">${title}</h3>
-            <p class="text-sm text-gray-700">${cookTime}</p>
-            <p class="text-sm text-gray-600">${vegStatus}</p>
-            <p class="text-sm text-gray-700 mt-1">${shortDesc}</p>
-        `;
-        card.appendChild(btn);
-        card.appendChild(hiddenContent);
-        container.appendChild(card);
-    });
+                const lines = recipeBlock.split("\n");
+                const title = lines[0]?.replace(/^\d+\.\s*/, "") || `Recipe ${i + 1}`;
+                const cookTime = lines.find(l => l.toLowerCase().includes("cooking time")) || "";
+                const vegStatus = lines.find(l => l.toLowerCase().includes("veg")) || "";
+                const shortDesc = lines.find(l => l.toLowerCase().includes("description")) || "";
+
+                const hiddenContent = document.createElement("div");
+                hiddenContent.className = "mt-2 hidden whitespace-pre-wrap text-sm text-gray-800";
+                hiddenContent.innerText = lines.slice(4).join("\n");
+
+                const btn = document.createElement("button");
+                btn.className = "mt-2 px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded";
+                btn.textContent = "Read more";
+                btn.addEventListener("click", () => hiddenContent.classList.toggle("hidden"));
+
+                card.innerHTML = `
+                    <h3 class="text-lg font-bold text-green-900">${title}</h3>
+                    <p class="text-sm text-gray-700">${cookTime}</p>
+                    <p class="text-sm text-gray-600">${vegStatus}</p>
+                    <p class="text-sm text-gray-700 mt-1">${shortDesc}</p>
+                `;
+                card.appendChild(btn);
+                card.appendChild(hiddenContent);
+                container.appendChild(card);
+            } catch (parseError) {
+                console.warn("Skipping invalid recipe block:", recipeBlock);
+            }
+        });
+    } catch (error) {
+        container.innerHTML = `<p class="text-red-600">Server Error: ${error.message}</p>`;
+    }
 });
-
 
 
 
