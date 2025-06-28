@@ -19,6 +19,19 @@ menuToggle.addEventListener("click", () => {
   }
 });
 
+const menuLinks = document.querySelectorAll("#nav-links a");
+//after click link close the side menu
+menuLinks.forEach(link => {
+  link.addEventListener("click", () => {
+    if (menuOpen) {
+      navLinks.classList.toggle("hidden");
+      menuIcon.textContent = "menu";
+      menuOpen = false;
+      mainContent.classList.remove("blur-[4px]", "brightness-50", "pointer-events-none");
+    }
+  });
+});
+
 
 //Adding or Removing the ingredients instantly in current items list
 const ingredients = document.getElementById('ingredients');

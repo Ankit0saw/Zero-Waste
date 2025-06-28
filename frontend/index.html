@@ -35,16 +35,20 @@
                     class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg  md:flex-row md:space-x-8 md:mt-0 md:border-0">
                     <li>
                         <a href="#home"
-                            class="block py-2 px-3 rounded-sm  hover:bg-gray-100 md:hover:bg-gray-100 md:p-1"
+                            class="block py-2 px-3 rounded-sm hover:underline hover:font-bold md:p-1"
                             aria-current="page">Home</a>
                     </li>
                     <li>
                         <a href="#about"
-                            class="block py-2 px-3  rounded-sm hover:bg-gray-100 md:hover:bg-gray-100 md:p-1">About</a>
+                            class="block py-2 px-3  rounded-sm hover:underline hover:font-bold md:p-1">
+                            About
+                        </a>
                     </li>
                     <li>
                         <a href="#contact"
-                            class="block py-2 px-3  rounded-sm hover:bg-gray-100 md:hover:bg-gray-100 md:p-1">Contact</a>
+                            class="block py-2 px-3 rounded-sm hover:underline hover:font-bold md:p-1">
+                            Contact
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -53,59 +57,186 @@
     </header>
 
     <main id="main-content" class="transition duration-300 h-auto overflow-x-hidden">
-        <section id="home-section">
-            <!-- Home page -->
-            <div id="home"
-                class="mt-16 flex flex-col md:flex-row h-auto md:h-[90vh] bg-green-100 text-black scroll-mt-[60px]">
 
-                <!--left side of home-->
-                <div class="w-full md:w-1/3 rounded-md p-2 h-auto md:h-full overflow-y-auto">
-                    <h2 class="text-xl font-semibold mb-4 mt-4">Enter your ingredients:</h2>
-                    <div class="search-area flex flex-col items-center">
-                        <textarea id="ingredients" placeholder="Write comma separated items"
-                            class="w-full h-32 p-4 border border-gray-500 rounded-md focus:outline-none bg-green-200 hover:bg-green-300"></textarea>
-                        <div class="flex flex-row p-2">
-                            <button id="clr-btn"
-                                class="text-black border border-black hover:bg-green-700 hover:text-white font-semibold px-2 py-2 rounded-md transition shadow-[0_0_4px_1px_rgba(34,197,94,0.2)] m-0.5">
-                                Clear
-                            </button>
-                            <button id="add-btn"
-                                class="bg-green-700 hover:bg-green-800 text-white font-semibold px-2 py-2 rounded-md transition border  border-green-100 shadow-[0_0_4px_1px_rgba(34,197,94,0.2)] m-0.5">
-                                View Recipes
-                            </button>
-                        </div>
-                    </div>
+        <section id="home"
+            class="mt-16 flex flex-col md:flex-row h-auto md:h-[90vh] bg-green-100 text-black scroll-mt-[60px]">
 
-                    <h2 class="hidden md:block text-xl font-semibold mt-5">Current items:</h2>
-                    <div
-                        class="hidden md:block relative flex-col rounded-lg bg-green-200 shadow-sm border border-slate-200">
-                        <nav id="items-container" class="gap-1 p-1">
-                            <!-- Current Ingredients will be added by JS here -->
-                        </nav>
+            <!--left side of home-->
+            <div class="w-full md:w-1/3 rounded-md p-2 h-auto md:h-auto overflow-y-auto">
+                <h2 class="text-xl font-semibold mb-4 mt-4">Enter your ingredients:</h2>
+                <div class="search-area flex flex-col items-center">
+                    <textarea id="ingredients" placeholder="Write comma separated items"
+                        class="w-full h-32 p-4 border border-gray-500 rounded-md focus:outline-none bg-green-200 hover:bg-green-300"></textarea>
+                    <div class="flex flex-row p-2">
+                        <button id="clr-btn"
+                            class="text-black border border-black hover:bg-green-700 hover:text-white font-semibold px-2 py-2 rounded-md transition shadow-[0_0_4px_1px_rgba(34,197,94,0.2)] m-0.5">
+                            Clear
+                        </button>
+                        <button id="add-btn"
+                            class="bg-green-700 hover:bg-green-800 text-white font-semibold px-2 py-2 rounded-md transition border  border-green-100 shadow-[0_0_4px_1px_rgba(34,197,94,0.2)] m-0.5">
+                            View Recipes
+                        </button>
                     </div>
                 </div>
 
-                <!--black line b/w left and right section-->
-                <div class="hidden md:block w-px bg-black"></div>
-
-                <!--right side of home-->
-                <div class="w-full md:w-2/3 p-4 h-screen">
-                    <h2 class="text-xl font-semibold">Recipe Suggestions will appear here</h2>
-                    <div id="recipe-result"
-                        class="flex flex-wrap gap-4 p-4 justify-start items-stretch my-6 bg-green-100 shadow-sm border border-slate-200 rounded-lg w-full">
-                        <!-- Results will be added by JS here -->
-                        <img src="img/food-landing-img.png" alt="general suggestion image"
-                            class="mt-5 w-1/2 h-auto opacity-50 rounded-md mx-auto bg-green-100">
-                    </div>
+                <h2 class="hidden md:block text-xl font-semibold mt-5">Current items:</h2>
+                <div
+                    class="hidden md:block relative flex-col rounded-lg bg-green-200 shadow-sm border border-slate-200">
+                    <nav id="items-container" class="gap-1 p-1">
+                        <!-- Current Ingredients will be added by JS here -->
+                    </nav>
                 </div>
             </div>
 
+            <!--black line b/w left and right section-->
+            <div class="hidden md:block w-px bg-black"></div>
+
+            <!--right side-->
+            <div class="w-full md:w-2/3 p-4 h-auto md:h-auto">
+                <h2 class="text-xl font-semibold">Recipe Suggestions will appear here</h2>
+                <div id="recipe-result"
+                    class="flex flex-wrap gap-4 p-4 justify-start items-stretch my-6 bg-green-100 shadow-sm border border-slate-200 rounded-lg w-full">
+                    <!-- Results will be added by JS here -->
+                    <img src="img/food-landing-img.png" alt="general suggestion image"
+                        class="mt-5 w-1/2 h-auto opacity-50 rounded-md mx-auto bg-green-100">
+                </div>
+            </div>
         </section>
 
 
+        <!-- About Section -->
+        <section id="about" class="bg-cyan-100 py-8 px-4 sm:px-6 lg:px-8 border-t border-gray-300 scroll-mt-[60px]">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+
+                <!-- Image -->
+                <div class="w-full flex justify-center order-2 md:order-1">
+                    <img src="img/vegetable-about-img.png" alt="Indian cooking"
+                        class="transform hover:scale-105 transition duration-500">
+                </div>
+
+                <!-- Text Content -->
+                <div class="text-left space-y-1 order-1 md:order-2">
+                    <h2 class="text-4xl font-bold text-green-900 mb-2">About <span
+                            class="text-green-600">Zero-Waste</span>
+                    </h2>
+                    <p class="text-gray-800 text-lg leading-relaxed">
+                        <strong>Zero-Waste</strong> is a smart Indian recipe suggestion tool that helps you cook
+                        delicious
+                        meals using ingredients you already have at home. Whether it’s <em>potatoes, tomatoes, or
+                            eggs</em>,
+                        you’ll receive step-by-step instructions for authentic Indian dishes.
+                    </p>
+
+                    <div class="bg-white rounded-xl shadow p-3 space-y-2 border-l-4 border-green-400 mt-4">
+                        <h3 class="text-2xl font-semibold text-green-700">Our Mission</h3>
+                        <p class="text-gray-700">
+                            Helping you turn leftovers into simple, tasty meals using what you already have.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow p-3 space-y-2 border-l-4 border-green-400">
+                        <h3 class="text-2xl font-semibold text-green-700">Our Vision</h3>
+                        <p class="text-gray-700">
+                            Turn everyday ingredients into real Indian meals-enjoy more.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow p-3 space-y-2 border-l-4 border-green-400">
+                        <h3 class="text-2xl font-semibold text-green-700">Our Motto</h3>
+                        <p class="text-gray-700 italic">Less Waste. More Taste.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- Contact Section -->
+        <section id="contact" class="bg-yellow-100 py-8 px-4 sm:px-6 lg:px-8 border-t border-gray-300 scroll-mt-[60px]">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+
+                <!-- Form -->
+                <div>
+                    <h2 class="text-4xl font-bold text-green-900 mb-4">Contact <span class="text-green-600">Us</span>
+                    </h2>
+                    <p class="text-gray-700 text-lg mb-6">
+                        Got feedback or a new recipe idea? Fill out the form below — we’d love to hear from you!
+                    </p>
+
+                    <form class="bg-gray-100 rounded-lg shadow-lg p-6">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-semibold mb-2">Your Name</label>
+                            <input type="text"
+                                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-200"
+                                placeholder="Enter your name">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-semibold mb-2">Email</label>
+                            <input type="email"
+                                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-200"
+                                placeholder="you@example.com">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-semibold mb-2">Message</label>
+                            <textarea
+                                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-200"
+                                rows="4" placeholder="Your message..."></textarea>
+                        </div>
+                        <button type="submit"
+                            class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-md transition">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Image -->
+                <div class="w-full">
+                    <img src="img/chef-contact-img.png" alt="Contact cooking team"
+                        class="transform hover:scale-105 transition duration-500">
+                </div>
+                
+            </div>
+        </section>
+
     </main>
 
+    <!-- Footer Section -->
+    <footer class="bg-[#111] text-green-100 py-10 px-4">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
 
+            <!-- Logo and Tagline -->
+            <div>
+                <h2 class="text-2xl font-bold text-green-400 mb-2">Zero-Waste</h2>
+                <p class="text-sm text-gray-300 mr-12">
+                    Cook smarter with what you already have. Real Indian food recipe, no waste.
+                </p>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-xl font-semibold text-green-300 mb-3">Quick Links</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#home" class="hover:text-green-500">Home</a></li>
+                    <li><a href="#about" class="hover:text-green-500">About</a></li>
+                    <li><a href="#contact" class="hover:text-green-500">Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Info -->
+            <div>
+                <h3 class="text-xl font-semibold text-green-300 mb-3">Connect</h3>
+                <p class="text-sm">Email: <a href="mailto:ankitkrrsss@gmail.com"
+                        class="text-green-400 hover:underline">ankitkrrsss@gmail.com</a></p>
+                <p class="text-sm">Made with ❤️ for Indian kitchens</p>
+            </div>
+
+        </div>
+
+        <!-- Bottom -->
+        <div class="border-t border-gray-700 mt-8 pt-4 text-center text-xs text-gray-400">
+            &copy; 2025 Zero-Waste. All rights reserved.
+        </div>
+    </footer>
 
     <script src="script/app.js"></script>
 </body>
