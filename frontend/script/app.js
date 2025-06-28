@@ -1,15 +1,21 @@
 //For hamburger menu
-const toggle = document.getElementById('menu-toggle');
-const menu = document.getElementById('nav-links');
+const menuToggle = document.getElementById("menu-toggle");
+const navLinks = document.getElementById("nav-links");
+const menuIcon = document.getElementById("menu-icon");
 
-toggle.addEventListener("click", () =>{
-    menu.classList.toggle("hidden");
-});
+  let menuOpen = false;
+
+  menuToggle.addEventListener("click", () => {
+    navLinks.classList.toggle("hidden");
+    menuOpen = !menuOpen;
+    menuIcon.textContent = menuOpen ? "close" : "menu";
+  });
 
 
-//Showing the ingredients instantly in current items list
+//Adding or Removing the ingredients instantly in current items list
 const ingredients = document.getElementById('ingredients');
 const addBtn = document.getElementById('add-btn');
+const clrBtn = document.getElementById('clr-btn');
 const itemContainer = document.getElementById('items-container');
 
 addBtn.addEventListener("click", () => {
@@ -21,82 +27,106 @@ addBtn.addEventListener("click", () => {
     itemContainer.innerHTML = '';
     items.forEach(element => {
         const p = document.createElement('p');
-        p.className ='text-slate-800 flex w-full items-center rounded-md p-3 transition-all hover:bg-slate-200';
+        p.className ='text-slate-800 flex w-full items-center rounded-md p-3 transition-all hover:bg-green-300';
         p.textContent = element;
         itemContainer.appendChild(p);
     });
 });
 
+clrBtn.addEventListener("click", () =>{
+  ingredients.value = '';
+  itemContainer.innerHTML = '';
+});
 
 //to show the generated recipes
 document.getElementById("add-btn").addEventListener("click", async () => {
-    const ingredients = document.getElementById("ingredients").value.trim();
-    const container = document.getElementById("recipe-result");
+  const ingredients = document.getElementById("ingredients").value.trim();
+  const resultContainer = document.getElementById("recipe-result");
 
-    if (!ingredients) {
-        container.innerHTML = `<p class="text-red-600">Please enter some ingredients.</p>`;
-        return;
+  if (!ingredients) {
+    resultContainer.innerHTML = `<p class="text-red-600">Please enter some ingredients...</p>`;
+    return;
+  }
+
+  resultContainer.innerHTML = `<p class="text-green-600 p-2">Fetching recipes...</p>`;
+
+  try {
+    const res = await fetch("http://localhost:3000/get-recipes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ingredients }),
+    });
+
+    const data = await res.json();
+    resultContainer.innerHTML = "";
+
+    if (!data.success) {
+      resultContainer.innerHTML = `<p class="text-red-600">Error: ${data.error}</p>`;
+      return;
     }
 
-    container.innerHTML = `<p class="text-gray-600 p-2">Fetching recipes...</p>`;
+    const recipesText = data.data;
 
-    try {
-        const res = await fetch("http://localhost:3000/get-recipes", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ingredients }),
-        });
+    // Split into 3 blocks using title pattern
+    const recipeBlocks = recipesText.split(/\*\*\d+\.\s(.+?)\*\*/).slice(1);
 
-        const data = await res.json();
-        container.innerHTML = "";
+    // Group into title + block
+    for (let i = 0; i < recipeBlocks.length; i += 2) {
+      const title = recipeBlocks[i].trim();
+      const details = recipeBlocks[i + 1];
 
-        if (!data.success) {
-            container.innerHTML = `<p class="text-red-600">Error: ${data.error}</p>`;
-            return;
-        }
+      const cookTime = details.match(/\*\*Cooking Time:\*\*\s*(.+)/)?.[1] || "Time not found";
+      const type = details.match(/\*\*Veg\/Non-Veg:\*\*\s*(.+)/)?.[1] || "Type not mentioned";
+      const description = details.match(/\*\*Short Description:\*\*\s*(.+)/)?.[1] || "No description";
 
-        // Split Gemini response into recipe blocks
-        const recipes = data.data.split(/\n\s*\n/).filter(Boolean);
+      const ingredientsMatch = details.match(/\*\*Ingredients:\*\*([\s\S]*?)\*\*Step/);
+      const stepsMatch = details.match(/\*\*Step-by-step Instructions:\*\*([\s\S]*)/);
 
-        recipes.forEach((recipeBlock, i) => {
-            try {
-                const card = document.createElement("div");
-                card.className = "bg-green-100 border rounded-lg p-4 mb-4 shadow";
+      const ingredientsList = ingredientsMatch ? ingredientsMatch[1].trim().split("\n").map(i => i.replace(/^\s*[-*]\s*/, "").trim()).filter(Boolean) : [];
+      const stepsList = stepsMatch ? stepsMatch[1].trim().split("\n").map(s => s.replace(/^\d+\.\s*/, "").trim()).filter(Boolean) : [];
 
-                const lines = recipeBlock.split("\n");
-                const title = lines[0]?.replace(/^\d+\.\s*/, "") || `Recipe ${i + 1}`;
-                const cookTime = lines.find(l => l.toLowerCase().includes("cooking time")) || "";
-                const vegStatus = lines.find(l => l.toLowerCase().includes("veg")) || "";
-                const shortDesc = lines.find(l => l.toLowerCase().includes("description")) || "";
+      const card = document.createElement("div");
+      card.className = "w-full md:w-[300px] bg-green-200 hover:bg-green-300 text-gray-900 rounded-md shadow-lg p-4 mb-4 hover:scale-[1.02] transition-transform duration-300 border border-green-500";
 
-                const hiddenContent = document.createElement("div");
-                hiddenContent.className = "mt-2 hidden whitespace-pre-wrap text-sm text-gray-800";
-                hiddenContent.innerText = lines.slice(4).join("\n");
+      card.innerHTML = `
+        <h3 class="text-xl font-bold mb-1 text-green-900">${title}</h3>
+        <p class="text-sm text-gray-700 mb-1"><strong>Type:</strong> ${type}</p>
+        <p class="text-sm text-gray-700 mb-1"><strong>Time:</strong> ${cookTime}</p>
+        <p class="text-sm text-gray-600 mb-2">${description}</p>
+        <button class="bg-green-700 text-white text-sm px-4 py-1 rounded hover:bg-green-800 transition" data-toggle>
+          Read more
+        </button>
+        <div class="hidden mt-3 text-sm text-gray-800 space-y-2 p-3 rounded" data-content>
+          <p><strong>Ingredients:</strong></p>
+          <ul class="list-disc pl-4">${ingredientsList.map(i => `<li>${i}</li>`).join("")}</ul>
+          <p class="mt-2"><strong>Steps:</strong></p>
+          <ol class="list-decimal pl-4">${stepsList.map(s => `<li>${s}</li>`).join("")}</ol>
+        </div>
+      `;
 
-                const btn = document.createElement("button");
-                btn.className = "mt-2 px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded";
-                btn.textContent = "Read more";
-                btn.addEventListener("click", () => hiddenContent.classList.toggle("hidden"));
+      const toggleBtn = card.querySelector("[data-toggle]");
+      const content = card.querySelector("[data-content]");
 
-                card.innerHTML = `
-                    <h3 class="text-lg font-bold text-green-900">${title}</h3>
-                    <p class="text-sm text-gray-700">${cookTime}</p>
-                    <p class="text-sm text-gray-600">${vegStatus}</p>
-                    <p class="text-sm text-gray-700 mt-1">${shortDesc}</p>
-                `;
-                card.appendChild(btn);
-                card.appendChild(hiddenContent);
-                container.appendChild(card);
-            } catch (parseError) {
-                console.warn("Skipping invalid recipe block:", recipeBlock);
-            }
-        });
-    } catch (error) {
-        container.innerHTML = `<p class="text-red-600">Server Error: ${error.message}</p>`;
+      toggleBtn.addEventListener("click", () => {
+        content.classList.toggle("hidden");
+        toggleBtn.textContent = content.classList.contains("hidden") ? "Read more" : "Hide";
+      });
+
+      resultContainer.appendChild(card);
     }
+
+  } catch (error) {
+    resultContainer.innerHTML = `<p class="text-red-600">Server Error: ${error.message}</p>`;
+  }
 });
 
 
+
+
+
+
+
+// Spoonacular api
 
 // const ingredients = document.getElementById('ingredients');
 // const addBtn = document.getElementById('add-btn');
