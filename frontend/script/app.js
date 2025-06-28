@@ -1,15 +1,23 @@
 //For hamburger menu
+const mainContent = document.getElementById("main-content");
 const menuToggle = document.getElementById("menu-toggle");
 const navLinks = document.getElementById("nav-links");
 const menuIcon = document.getElementById("menu-icon");
 
   let menuOpen = false;
 
-  menuToggle.addEventListener("click", () => {
-    navLinks.classList.toggle("hidden");
-    menuOpen = !menuOpen;
-    menuIcon.textContent = menuOpen ? "close" : "menu";
-  });
+menuToggle.addEventListener("click", () => {
+  navLinks.classList.toggle("hidden")
+  menuOpen = !menuOpen;
+  menuIcon.textContent = menuOpen ? "close" : "menu";
+
+  // Toggle blur on the rest of the page
+  if (menuOpen) {
+    mainContent.classList.add("blur-[4px]", "brightness-50", "pointer-events-none");
+  } else {
+    mainContent.classList.remove("blur-[4px]", "brightness-50", "pointer-events-none");
+  }
+});
 
 
 //Adding or Removing the ingredients instantly in current items list
@@ -17,6 +25,7 @@ const ingredients = document.getElementById('ingredients');
 const addBtn = document.getElementById('add-btn');
 const clrBtn = document.getElementById('clr-btn');
 const itemContainer = document.getElementById('items-container');
+const resultContainer = document.getElementById("recipe-result");
 
 addBtn.addEventListener("click", () => {
     const input = ingredients.value.trim();
@@ -36,6 +45,7 @@ addBtn.addEventListener("click", () => {
 clrBtn.addEventListener("click", () =>{
   ingredients.value = '';
   itemContainer.innerHTML = '';
+  resultContainer.innerHTML = '<img src="img/food-landing-img.png" alt="general suggestion image" class="mt-5 w-1/2 h-auto opacity-50 rounded-md mx-auto bg-green-100">';
 });
 
 //to show the generated recipes

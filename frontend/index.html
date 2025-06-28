@@ -13,94 +13,97 @@
 
 <body>
 
-    <section id="home-section">
-        <!-- Header Section -->
-        <header id="header"
-            class="fixed w-full top-0 text-black bg-gradient-to-b from-green-200 via-emerald-400 to-teal-600 z-50">
-            <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                <div id="logo-title">
-                    <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
-                        <img src="img/Zero-Waste-Logo.png" class="h-8" alt="Zero-Waste Logo" />
-                        <span class="self-center text-2xl font-semibold whitespace-nowrap">Zero-Waste</span>
-                    </a>
-                </div>
-
-                <button id="menu-toggle"
-                    class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm rounded-lg md:hidden hover:bg-white focus:outline-none focus:ring-2 focus:ring-gray-200">
-                    <span id="menu-icon" class="material-icons">menu</span>
-                </button>
-
-                <div id="nav-links"
-                    class="hidden fixed top-0 right-0 h-full w-64 bg-slate-800 z-50 transition-transform duration-300 transform translate-x-full md:static md:block md:w-auto md:bg-transparent md:translate-x-0">
-                    <ul
-                        class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg  md:flex-row md:space-x-8 md:mt-0 md:border-0">
-                        <li>
-                            <a href="#home"
-                                class="block py-2 px-3 rounded-sm  hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"
-                                aria-current="page">Home</a>
-                        </li>
-                        <li>
-                            <a href="#about"
-                                class="block py-2 px-3  rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">About</a>
-                        </li>
-                        <li>
-                            <a href="#contact"
-                                class="block py-2 px-3  rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Contact</a>
-                        </li>
-                    </ul>
-                </div>
-
+    <!-- Header Section -->
+    <header id="header"
+        class="fixed w-full top-0 text-black bg-gradient-to-b from-green-200 via-emerald-400 to-teal-600 z-50">
+        <div class="max-w-screen-xl mx-auto p-4 flex flex-wrap item-center justify-between relative">
+            <div id="logo-title">
+                <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
+                    <img src="img/Zero-Waste-Logo.png" class="h-8" alt="Zero-Waste Logo" />
+                    <span class="self-center text-2xl font-semibold whitespace-nowrap">Zero-Waste</span>
+                </a>
             </div>
-        </header>
 
-        <!-- Home page -->
-        <div id="home" class="mt-16 flex flex-col md:flex-row h-auto md:h-[90vh] bg-green-100 text-black scroll-mt-[60px]">
+            <button id="menu-toggle"
+                class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm rounded-lg md:hidden hover:bg-white focus:outline-none focus:ring-2 focus:ring-gray-200">
+                <span id="menu-icon" class="material-icons">menu</span>
+            </button>
 
-            <!--left side of home-->
-            <div class="w-full md:w-1/3 rounded-md p-2 h-auto md:h-full overflow-y-auto">
-                <h2 class="text-xl font-semibold mb-4 mt-4">Enter your ingredients:</h2>
-                <div class="search-area flex flex-col items-center">
-                    <textarea id="ingredients" placeholder="Write comma separated items"
-                        class="w-full h-32 p-4 border border-gray-500 rounded-md focus:outline-none bg-green-200 hover:bg-green-300"></textarea>
-                    <div class="flex flex-row p-2">
-                        <button id="clr-btn"
-                            class="text-black border border-black hover:bg-green-700 hover:text-white font-semibold px-2 py-2 rounded-md transition shadow-[0_0_4px_1px_rgba(34,197,94,0.2)] m-0.5">
-                            Clear
-                        </button>
-                        <button id="add-btn"
-                            class="bg-green-700 hover:bg-green-800 text-white font-semibold px-2 py-2 rounded-md transition border  border-green-100 shadow-[0_0_4px_1px_rgba(34,197,94,0.2)] m-0.5">
-                            View Recipes
-                        </button>
+            <div id="nav-links"
+                class="hidden absolute top-full right-0 w-64 h-screen md:h-auto bg-green-300 z-40 md:static md:block md:w-auto md:bg-none md:bg-transparent md:mt-0">
+                <ul
+                    class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg  md:flex-row md:space-x-8 md:mt-0 md:border-0">
+                    <li>
+                        <a href="#home"
+                            class="block py-2 px-3 rounded-sm  hover:bg-gray-100 md:hover:bg-gray-100 md:p-1"
+                            aria-current="page">Home</a>
+                    </li>
+                    <li>
+                        <a href="#about"
+                            class="block py-2 px-3  rounded-sm hover:bg-gray-100 md:hover:bg-gray-100 md:p-1">About</a>
+                    </li>
+                    <li>
+                        <a href="#contact"
+                            class="block py-2 px-3  rounded-sm hover:bg-gray-100 md:hover:bg-gray-100 md:p-1">Contact</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </header>
+
+    <main id="main-content" class="transition duration-300 h-auto overflow-x-hidden">
+        <section id="home-section">
+            <!-- Home page -->
+            <div id="home"
+                class="mt-16 flex flex-col md:flex-row h-auto md:h-[90vh] bg-green-100 text-black scroll-mt-[60px]">
+
+                <!--left side of home-->
+                <div class="w-full md:w-1/3 rounded-md p-2 h-auto md:h-full overflow-y-auto">
+                    <h2 class="text-xl font-semibold mb-4 mt-4">Enter your ingredients:</h2>
+                    <div class="search-area flex flex-col items-center">
+                        <textarea id="ingredients" placeholder="Write comma separated items"
+                            class="w-full h-32 p-4 border border-gray-500 rounded-md focus:outline-none bg-green-200 hover:bg-green-300"></textarea>
+                        <div class="flex flex-row p-2">
+                            <button id="clr-btn"
+                                class="text-black border border-black hover:bg-green-700 hover:text-white font-semibold px-2 py-2 rounded-md transition shadow-[0_0_4px_1px_rgba(34,197,94,0.2)] m-0.5">
+                                Clear
+                            </button>
+                            <button id="add-btn"
+                                class="bg-green-700 hover:bg-green-800 text-white font-semibold px-2 py-2 rounded-md transition border  border-green-100 shadow-[0_0_4px_1px_rgba(34,197,94,0.2)] m-0.5">
+                                View Recipes
+                            </button>
+                        </div>
+                    </div>
+
+                    <h2 class="hidden md:block text-xl font-semibold mt-5">Current items:</h2>
+                    <div
+                        class="hidden md:block relative flex-col rounded-lg bg-green-200 shadow-sm border border-slate-200">
+                        <nav id="items-container" class="gap-1 p-1">
+                            <!-- Current Ingredients will be added by JS here -->
+                        </nav>
                     </div>
                 </div>
 
-                <h2 class="hidden md:block text-xl font-semibold mt-5">Current items:</h2>
-                <div class="hidden md:block relative flex-col rounded-lg bg-green-200 shadow-sm border border-slate-200">
-                    <nav id="items-container" class="gap-1 p-1">
-                        <!-- Current Ingredients will be added by JS here -->
-                    </nav>
+                <!--black line b/w left and right section-->
+                <div class="hidden md:block w-px bg-black"></div>
+
+                <!--right side of home-->
+                <div class="w-full md:w-2/3 p-4 h-screen">
+                    <h2 class="text-xl font-semibold">Recipe Suggestions will appear here</h2>
+                    <div id="recipe-result"
+                        class="flex flex-wrap gap-4 p-4 justify-start items-stretch my-6 bg-green-100 shadow-sm border border-slate-200 rounded-lg w-full">
+                        <!-- Results will be added by JS here -->
+                        <img src="img/food-landing-img.png" alt="general suggestion image"
+                            class="mt-5 w-1/2 h-auto opacity-50 rounded-md mx-auto bg-green-100">
+                    </div>
                 </div>
             </div>
 
-            <!--black line b/w left and right section-->
-            <div class="hidden md:block w-px bg-black"></div>
-
-            <!--right side of home-->
-            <div class="w-full md:w-2/3 p-4 h-screen">
-                <h2 class="text-xl font-semibold">Recipe Suggestions will appear here</h2>
-                <div id="recipe-result"
-                    class="flex flex-wrap gap-4 p-4 justify-start items-stretch my-6 bg-green-100 shadow-sm border border-slate-200 rounded-lg w-full">
-                    <!-- Results will be added by JS here -->
-                    <img src="img/food-landing-img.png"
-                        alt="general suggestion image"
-                        class="mt-5 w-1/2 h-auto opacity-50 rounded-md mx-auto bg-green-100">
-                </div>
-            </div>
-        </div>
-
-    </section>
+        </section>
 
 
+    </main>
 
 
 
