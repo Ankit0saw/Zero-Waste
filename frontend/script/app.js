@@ -27,8 +27,8 @@ menuToggle.addEventListener("click", () => {
   }
 });
 
-const menuLinks = document.querySelectorAll("#nav-links a");
 //after click link close the side menu
+const menuLinks = document.querySelectorAll("#nav-links a");
 menuLinks.forEach((link) => {
   link.addEventListener("click", () => {
     if (menuOpen) {
@@ -43,6 +43,7 @@ menuLinks.forEach((link) => {
     }
   });
 });
+
 
 //Adding or Removing the ingredients instantly in current items list
 const ingredients = document.getElementById("ingredients");
@@ -73,9 +74,30 @@ addBtn.addEventListener("click", () => {
 clrBtn.addEventListener("click", () => {
   ingredients.value = "";
   itemContainer.innerHTML = "";
-  resultContainer.innerHTML =
-    '<img src="img/food-landing-img.png" alt="general suggestion image" class="mt-5 w-1/2 h-auto opacity-50 rounded-md mx-auto bg-green-100">';
+  resultContainer.innerHTML =`
+    <img src="img/food-landing-img.png" alt="general suggestion image" 
+    class="mt-5 w-1/2 h-auto opacity-50 rounded-md mx-auto bg-green-100">
+    `;
 });
+
+
+//for scroll option top to bottom and vice versa
+const scrollBtn = document.getElementById("scroll-toggle");
+  const icon = document.getElementById("scroll-icon");
+  let isAtBottom = false;
+
+  scrollBtn.addEventListener("click", () => {
+    if (!isAtBottom) {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+      icon.textContent = "expand_less";
+      isAtBottom = true;
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      icon.textContent = "expand_more";
+      isAtBottom = false;
+    }
+  });
+
 
 //to show the generated recipes
 document.getElementById("add-btn").addEventListener("click", async () => {
@@ -83,11 +105,20 @@ document.getElementById("add-btn").addEventListener("click", async () => {
   const resultContainer = document.getElementById("recipe-result");
 
   if (!ingredients) {
-    resultContainer.innerHTML = `<p class="text-red-600">Please enter some ingredients...</p>`;
+    resultContainer.innerHTML = `
+      <p class="text-red-600 mb-2 text-left w-full">Please enter some ingredients...</p>
+      <img src="img/food-landing-img.png" alt="general suggestion image"
+         class="mx-auto w-1/2 h-auto opacity-50 bg-green-100" />
+    `;
+
     return;
   }
 
-  resultContainer.innerHTML = `<p class="text-green-600 p-2">Fetching recipes...</p>`;
+  resultContainer.innerHTML = `
+    <p class="text-green-600 p-2 text-left w-full">Fetching recipes...</p>
+    <img src="img/food-landing-img.png" alt="general suggestion image"
+         class="mx-auto w-1/2 h-auto opacity-50 bg-green-100" />
+  `;
 
   try {
     const res = await fetch("http://localhost:3000/get-recipes", {
