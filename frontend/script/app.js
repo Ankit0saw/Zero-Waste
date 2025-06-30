@@ -121,7 +121,7 @@ document.getElementById("add-btn").addEventListener("click", async () => {
   `;
 
   try {
-    const res = await fetch("http://localhost:3000/get-recipes", {
+    const res = await fetch("https://zerowaste-7jst.onrender.com", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ingredients }),
