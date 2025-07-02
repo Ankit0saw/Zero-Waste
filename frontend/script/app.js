@@ -81,6 +81,32 @@ clrBtn.addEventListener("click", () => {
 });
 
 
+// for sending message in contact form
+document.getElementById("contact-form").addEventListener("submit", function(e) {
+ e.preventDefault(); // prevent page reload
+
+  const form = e.target;
+  const data = new FormData(form);
+
+  fetch("https://formsubmit.co/ajax/ankitkrrsss@gmail.com", {
+    method: "POST",
+    body: data
+  })
+  .then(response => {
+    if (response.ok) {
+      alert("Message sent successfully!");
+      form.reset(); // Clear the form
+    } else {
+      alert("Failed to send message.");
+    }
+  })
+  .catch(error => {
+    alert("An error occurred. Please try again later.");
+    console.error(error);
+  });
+});
+
+
 //for scroll option top to bottom and vice versa
 const scrollBtn = document.getElementById("scroll-toggle");
   const icon = document.getElementById("scroll-icon");
@@ -121,7 +147,8 @@ document.getElementById("add-btn").addEventListener("click", async () => {
   `;
 
   try {
-    const res = await fetch("http://localhost:3000/get-recipes", {
+    //const res = await fetch("http://localhost:3000/get-recipes", {
+    const res = await fetch("https://zerowaste-7jst.onrender.com/get-recipes",{
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ingredients }),
@@ -136,9 +163,19 @@ document.getElementById("add-btn").addEventListener("click", async () => {
     }
 
     const recipesText = data.data;
+    console.log(recipesText);
 
     // Split into 3 blocks using title pattern
-    const recipeBlocks = recipesText.split(/\*\*\d+\.\s(.+?)\*\*/).slice(1);
+    let recipeBlocks = recipesText.split(/\*\*\d+\.\s(.+?)\*\*/).slice(1); //gemini response:**1.Title**
+    if (recipeBlocks.length < 2) {
+      // if user directly entered the recipe name
+      recipeBlocks = recipesText.split(/\*\*Recipe\s\d+:\s(.+?)\*\*/).slice(1); //response: **Recipe 1: Title**
+    }
+    if (recipeBlocks.length < 2) {
+      // if user directly entered the recipe name
+      recipeBlocks = recipesText.split(/\*\*Title:\*\*\s*(.+)/).slice(1); //response: **Recipe 1: ** 1. **Title:** Title
+    }
+
 
     // Group into title + block
     for (let i = 0; i < recipeBlocks.length; i += 2) {
