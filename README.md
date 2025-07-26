@@ -2,6 +2,10 @@
 
 > **Slogan:** _"Recipes from what you already have!"_
 
+### 🔗 Live Preview
+
+[Click here to visit Zero-Waste](https://zerowaste-7jst.onrender.com/)
+
 **Zero-Waste** is a smart, user-friendly web application that helps users find delicious recipes using the ingredients they already have at home - reducing food waste, encouraging creative cooking and making everyday ingredients feel special.
 
 ## 🛠️ Technologies Used
