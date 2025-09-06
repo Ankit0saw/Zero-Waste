@@ -31,22 +31,50 @@ app.get("/", (req, res) => {
 app.post("/get-recipes", async (req, res) => {
   const { ingredients } = req.body;
 
-  const prompt = `Suggest 3 popular Indian recipes using the following ingredients: ${ingredients}.
-                  Each recipe should include:
-                  1. Title
-                  2. Cooking Time
-                  3. Veg or Non-Veg type
-                  4. Short Description
-                  5. Complete Ingredients
-                  6. Step-by-step Instructions`;
+  const prompt = `Generate exactly 5 popular Indian recipes using mostly these ingredients: ${ingredients}.
+                  Return a valid JSON array with exactly this structure for each recipe:
+
+                  [
+                    {
+                      "Title": "Recipe Name",
+                      "Cooking Time": "X minutes", 
+                      "Veg or Non-Veg": "Veg" or "Non-Veg",
+                      "Short Description": "Brief description of the dish",
+                      "Ingredients": [
+                        "ingredient 1 with quantity",
+                        "ingredient 2 with quantity"
+                      ],
+                      "Step-by-step Instructions": [
+                        "Step 1 description",
+                        "Step 2 description"
+                      ]
+                    }
+                  ]
+
+                  Important:
+                  - Use exactly these property names with correct capitalization and spacing
+                  - Ingredients array should contain strings with quantities
+                  - Instructions array should contain clear step-by-step directions
+                  - Return only valid JSON, no additional text
+                  - Each recipe should be complete and cookable`;
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContent(prompt);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: {
+        responseMimeType: "application/json",
+        temperature: 0.7,
+      },
+    });
     const response = await result.response;
-    const text = await response.text();
+    const jsonText = await response.text();
+    //console.log("Raw API Response:", jsonText);
 
-    res.send({ success: true, data: text });
+    const data = JSON.parse(jsonText);
+    //console.log("Parsed JSON Data:", data);
+
+    res.send({ success: true, data: data });
   } catch (err) {
     console.error("❌ Error occurred:", err.message);
     res.send({ success: false, error: err.message });

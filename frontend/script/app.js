@@ -44,7 +44,6 @@ menuLinks.forEach((link) => {
   });
 });
 
-
 //Adding or Removing the ingredients instantly in current items list
 const ingredients = document.getElementById("ingredients");
 const addBtn = document.getElementById("add-btn");
@@ -54,12 +53,11 @@ const resultContainer = document.getElementById("recipe-result");
 
 addBtn.addEventListener("click", () => {
   const input = ingredients.value.trim();
-  console.log(input);
   const items = input
     .split(",")
     .map((item) => item.trim())
     .filter((item) => item !== "");
-  console.log(items);
+  console.log("Input ingredients: ",items);
 
   itemContainer.innerHTML = "";
   items.forEach((element) => {
@@ -74,16 +72,15 @@ addBtn.addEventListener("click", () => {
 clrBtn.addEventListener("click", () => {
   ingredients.value = "";
   itemContainer.innerHTML = "";
-  resultContainer.innerHTML =`
+  resultContainer.innerHTML = `
     <img src="img/food-landing-img.png" alt="general suggestion image" 
     class="mt-5 w-1/2 h-auto opacity-50 rounded-md mx-auto bg-green-100">
     `;
 });
 
-
 // for sending message in contact form
 document.getElementById("contact-form").addEventListener("submit", function(e) {
- e.preventDefault(); // prevent page reload
+  e.preventDefault(); // prevent page reload
 
   const form = e.target;
   const data = new FormData(form);
@@ -106,44 +103,76 @@ document.getElementById("contact-form").addEventListener("submit", function(e) {
   });
 });
 
-
-//for scroll option top to bottom and vice versa
+//for scroll button option top to bottom and vice versa present at bottom
 const scrollBtn = document.getElementById("scroll-toggle");
-  const icon = document.getElementById("scroll-icon");
-  let isAtBottom = false;
+const icon = document.getElementById("scroll-icon");
+let isAtBottom = false;
 
-  scrollBtn.addEventListener("click", () => {
-    if (!isAtBottom) {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-      icon.textContent = "expand_less";
-      isAtBottom = true;
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      icon.textContent = "expand_more";
-      isAtBottom = false;
-    }
-  });
+scrollBtn.addEventListener("click", () => {
+  if (!isAtBottom) {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    icon.textContent = "expand_less";
+    isAtBottom = true;
+  } else {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    icon.textContent = "expand_more";
+    isAtBottom = false;
+  }
+});
 
+// Get recipe modal elements once at the top level
+const popupModal = document.getElementById("popup-modal");
+const popupContent = document.getElementById("popup-content");
+const closeModalBtn = document.getElementById("close-modal");
+
+// Close recipe modal function 
+function closeModal() {
+  popupModal.classList.add("hidden");
+  popupModal.classList.remove("flex");
+  
+  // Remove blur from background
+  mainContent.classList.remove(
+    "blur-[4px]",
+    "brightness-50",
+    "pointer-events-none"
+  );
+  document.body.style.overflow = "auto"; // re-enable page scroll
+}
+closeModalBtn.addEventListener("click", closeModal);
+
+// Close modal when clicking outside of it
+popupModal.addEventListener("click", (e) => {
+  if (e.target === popupModal) {
+    closeModal();
+  }
+});
+
+// Close modal with Escape key
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !popupModal.classList.contains("hidden")) {
+    closeModal();
+  }
+});
 
 //to show the generated recipes
-document.getElementById("add-btn").addEventListener("click", async () => {
-  const ingredients = document.getElementById("ingredients").value.trim();
-  const resultContainer = document.getElementById("recipe-result");
+addBtn.addEventListener("click", async () => {
+  const ingredientsValue = ingredients.value.trim();
 
-  if (!ingredients) {
+  if (!ingredientsValue) {
     resultContainer.innerHTML = `
-      <p class="text-red-600 mb-2 text-left w-full">Please enter some ingredients...</p>
+      <p class="text-red-600 mb-2 text-left w-full animate-pulse">Please enter some ingredients...</p>
       <img src="img/food-landing-img.png" alt="general suggestion image"
-         class="mx-auto w-1/2 h-auto opacity-50 bg-green-100" />
+           class="mx-auto w-1/2 h-auto opacity-50 bg-green-100" />
     `;
-
     return;
   }
 
   resultContainer.innerHTML = `
-    <p class="text-green-600 p-2 text-left w-full">Fetching recipes...</p>
+    <p class="text-green-600 p-2 text-left w-full">
+        Fetching recipes<span class="inline-block animate-bounce">...</span>
+    </p>
     <img src="img/food-landing-img.png" alt="general suggestion image"
-         class="mx-auto w-1/2 h-auto opacity-50 bg-green-100" />
+        class="mx-auto w-1/2 h-auto opacity-50 bg-green-100" />
   `;
 
   try {
@@ -151,10 +180,18 @@ document.getElementById("add-btn").addEventListener("click", async () => {
     const res = await fetch("https://zerowaste-7jst.onrender.com/get-recipes",{
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ingredients }),
+      body: JSON.stringify({ ingredients: ingredientsValue }),
     });
 
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
     const data = await res.json();
+    
+    // Log complete JSON response to console
+    console.log("Complete API Response:", data);
+    
     resultContainer.innerHTML = "";
 
     if (!data.success) {
@@ -162,143 +199,100 @@ document.getElementById("add-btn").addEventListener("click", async () => {
       return;
     }
 
-    const recipesText = data.data;
-    console.log(recipesText);
+    // New logic to handle the JSON array directly
+    const recipes = data.data;
 
-    // Split into 3 blocks using title pattern
-    let recipeBlocks = recipesText.split(/\*\*\d+\.\s(.+?)\*\*/).slice(1); //gemini response:**1.Title**
-    if (recipeBlocks.length < 2) {
-      // if user directly entered the recipe name
-      recipeBlocks = recipesText.split(/\*\*Recipe\s\d+:\s(.+?)\*\*/).slice(1); //response: **Recipe 1: Title**
+    // Check if recipes is an array and not empty
+    if (!Array.isArray(recipes) || recipes.length === 0) {
+      resultContainer.innerHTML = `<p class="text-gray-600">No recipes found for the given ingredients.</p>`;
+      return;
     }
-    if (recipeBlocks.length < 2) {
-      // if user directly entered the recipe name
-      recipeBlocks = recipesText.split(/\*\*Title:\*\*\s*(.+)/).slice(1); //response: **Recipe 1: ** 1. **Title:** Title
-    }
+    
+    recipes.forEach((recipe, index) => {
+        console.log(`Recipe ${index + 1}:`, recipe); // Log each recipe separately in console
+        
+        const card = document.createElement("div");
+        card.className =
+          "w-full md:w-[300px] bg-green-200 hover:bg-green-300 text-gray-900 rounded-md shadow-lg p-4 mb-4 hover:scale-[1.02] transition-transform duration-300 border border-green-500";
 
+        // Access the properties using multiple possible property names from the JSON
+        const title = recipe["Title"] || recipe.title || recipe["Recipe Name"] || "Recipe";
+        const vegType = recipe["Veg or Non-Veg type"] || recipe["Veg or Non-Veg"] || recipe["VegNonVeg"] || recipe.type || recipe["Veg/Non-Veg"] || "Unknown";
+        const cookingTime = recipe["Cooking Time"] || recipe["Time"] || recipe.time || recipe["Cook Time"] || "Unknown";
+        const description = recipe["Short Description"] || recipe["Description"] || recipe.description || recipe["Brief Description"] || "No description";
+        const ingredientsData = recipe["Ingredients"] || recipe.ingredients || recipe["Ingredient List"] || [];
+        const instructionsData = recipe["Step-by-step Instructions"] || recipe["Steps"] || recipe.instructions || recipe["Method"] || [];
 
-    // Group into title + block
-    for (let i = 0; i < recipeBlocks.length; i += 2) {
-      const title = recipeBlocks[i].trim();
-      const details = recipeBlocks[i + 1];
+        const ingredientsList = Array.isArray(ingredientsData) 
+          ? ingredientsData.map(i => `<li>${i}</li>`).join("")
+          : "<li>No ingredients available</li>";
+          
+        const stepsList = Array.isArray(instructionsData)
+          ? instructionsData.map(s => `<li>${s}</li>`).join("")
+          : "<li>No instructions available</li>";
 
-      const cookTime =
-        details.match(/\*\*Cooking Time:\*\*\s*(.+)/)?.[1] || "Time not found";
-      const type =
-        details.match(/\*\*Veg\/Non-Veg:\*\*\s*(.+)/)?.[1] ||
-        "Type not mentioned";
-      const description =
-        details.match(/\*\*Short Description:\*\*\s*(.+)/)?.[1] ||
-        "No description";
-
-      const ingredientsMatch = details.match(
-        /\*\*Ingredients:\*\*([\s\S]*?)\*\*Step/
-      );
-      const stepsMatch = details.match(
-        /\*\*Step-by-step Instructions:\*\*([\s\S]*)/
-      );
-
-      const ingredientsList = ingredientsMatch
-        ? ingredientsMatch[1]
-            .trim()
-            .split("\n")
-            .map((i) => i.replace(/^\s*[-*]\s*/, "").trim())
-            .filter(Boolean)
-        : [];
-      const stepsList = stepsMatch
-        ? stepsMatch[1]
-            .trim()
-            .split("\n")
-            .map((s) => s.replace(/^\d+\.\s*/, "").trim())
-            .filter(Boolean)
-        : [];
-
-      const card = document.createElement("div");
-      card.className =
-        "w-full md:w-[300px] bg-green-200 hover:bg-green-300 text-gray-900 rounded-md shadow-lg p-4 mb-4 hover:scale-[1.02] transition-transform duration-300 border border-green-500";
-
-      card.innerHTML = `
-        <h3 class="text-xl font-bold mb-1 text-green-900">${title}</h3>
-        <p class="text-sm text-gray-700 mb-1"><strong>Type:</strong> ${type}</p>
-        <p class="text-sm text-gray-700 mb-1"><strong>Time:</strong> ${cookTime}</p>
-        <p class="text-sm text-gray-600 mb-2">${description}</p>
-        <button class="bg-green-700 text-white text-sm px-4 py-1 rounded hover:bg-green-800 transition" data-toggle>
-          Read more
-        </button>
-        <div class="hidden mt-3 text-sm text-gray-800 space-y-2 p-3 rounded" data-content>
-          <p><strong>Ingredients:</strong></p>
-          <ul class="list-disc pl-4">${ingredientsList
-            .map((i) => `<li>${i}</li>`)
-            .join("")}</ul>
-          <p class="mt-2"><strong>Steps:</strong></p>
-          <ol class="list-decimal pl-4">${stepsList
-            .map((s) => `<li>${s}</li>`)
-            .join("")}</ol>
-        </div>
-      `;
-
-      const toggleBtn = card.querySelector("[data-toggle]");
-      const content = card.querySelector("[data-content]");
-
-      // Get popup modal elements
-      const popupModal = document.getElementById("popup-modal");
-      const popupContent = document.getElementById("popup-content");
-      const closeModalBtn = document.getElementById("close-modal");
-
-      // Attach event listener for "Read more" inside your forEach loop (you already have this structure)
-      toggleBtn.addEventListener("click", () => {
-        popupContent.innerHTML = `
-          <h2 class="text-2xl font-bold mb-1">${title}</h2>
-          <p><strong>Type:</strong> ${type}</p>
-          <p><strong>Time:</strong> ${cookTime}</p>
-          <p class="mb-2">${description}</p>
-
-          <div>
-            <p class="font-semibold">Ingredients:</p>
-            <ul class="list-disc pl-6 mb-3">
-              ${ingredientsList.map((i) => `<li>${i}</li>`).join("")}
-            </ul>
-
-            <p class="font-semibold">Steps:</p>
-            <ol class="list-decimal pl-6">
-              ${stepsList.map((s) => `<li>${s}</li>`).join("")}
-            </ol>
+        card.innerHTML = `
+          <h3 class="text-xl font-bold mb-1 text-green-900">${title}</h3>
+          <p class="text-sm text-gray-700 mb-1"><strong>Type:</strong> ${vegType}</p>
+          <p class="text-sm text-gray-700 mb-1"><strong>Time:</strong> ${cookingTime}</p>
+          <p class="text-sm text-gray-600 mb-2">${description}</p>
+          <button class="bg-green-700 text-white text-sm px-4 py-1 rounded hover:bg-green-800 transition" data-toggle>
+            Read more
+          </button>
+          <div class="hidden mt-3 text-sm text-gray-800 space-y-2 p-3 rounded" data-content>
+            <p><strong>Ingredients:</strong></p>
+            <ul class="list-disc pl-4">${ingredientsList}</ul>
+            <p class="mt-2"><strong>Steps:</strong></p>
+            <ol class="list-decimal pl-4">${stepsList}</ol>
           </div>
         `;
 
-        // Show modal
-        popupModal.classList.remove("hidden");
-        popupModal.classList.add("flex");
+        const toggleBtn = card.querySelector("[data-toggle]");
+        const content = card.querySelector("[data-content]");
 
-        // Blur the background main content
-        mainContent.classList.add(
-          "blur-[4px]",
-          "brightness-50",
-          "pointer-events-none"
-        );
-        document.body.style.overflow = "hidden";
-      });
+        // Attach event listener for "Read more"
+        toggleBtn.addEventListener("click", () => {
+          popupContent.innerHTML = `
+            <h2 class="text-2xl font-bold mb-1">${title}</h2>
+            <p><strong>Type:</strong> ${vegType}</p>
+            <p><strong>Time:</strong> ${cookingTime}</p>
+            <p class="mb-2">${description}</p>
 
-      // Close modal on 'X' button click
-      closeModalBtn.addEventListener("click", () => {
-        popupModal.classList.add("hidden");
-        popupModal.classList.remove("flex");
+            <div>
+              <p class="font-semibold">Ingredients:</p>
+              <ul class="list-disc pl-6 mb-3">
+                ${ingredientsList}
+              </ul>
 
-        // Remove blur from background
-        mainContent.classList.remove(
-          "blur-[4px]",
-          "brightness-50",
-          "pointer-events-none"
-        );
-        document.body.style.overflow = "auto"; // re-enable page scroll
-      });
+              <p class="font-semibold">Steps:</p>
+              <ol class="list-decimal pl-6">
+                ${stepsList}
+              </ol>
+            </div>
+          `;
 
-      resultContainer.appendChild(card);
-    }
+          // Show modal
+          popupModal.classList.remove("hidden");
+          popupModal.classList.add("flex");
+
+          // Blur the background main content
+          mainContent.classList.add(
+            "blur-[4px]",
+            "brightness-50",
+            "pointer-events-none"
+          );
+          document.body.style.overflow = "hidden";
+        });
+
+        resultContainer.appendChild(card);
+    });
+
   } catch (error) {
+    console.error("Recipe fetch error:", error);
     resultContainer.innerHTML = `<p class="text-red-600">Server Error: ${error.message}</p>`;
   }
 });
+
 
 
 
