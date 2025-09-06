@@ -1,6 +1,4 @@
 # Zero-Waste  
-[🔗 Live Preview](https://your-live-site-link.com)
-
 
 > **Slogan:** _"Recipes from what you already have!"_
 
@@ -17,7 +15,7 @@
 - **JavaScript** – Makes the app work: handles ingredient input, fetches recipes, and updates the UI.
 - **Node.js** – Executes backend code using JavaScript, enabling server-side processing.
 - **Express.js** –  Handles API routes and manages server logic for sending/receiving recipe data.
-- **Gemini 1.5 Flash** –  Generates personalized Indian recipe suggestions using AI based on user ingredients.
+- **Gemini 2.5 Flash** –  Generates personalized Indian recipe suggestions using AI based on user ingredients.
 
 
 ## 🔥 Features
